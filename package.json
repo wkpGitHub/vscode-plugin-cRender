@@ -1,0 +1,78 @@
+{
+  "name": "kp-cRender",
+  "displayName": "kp-cRender",
+  "description": "为cRender提供的快捷开发",
+  "version": "0.0.2",
+  "publisher": "wangkangping",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": ["onLanguage:javascript", "onLanguage:vue"],
+  "main": "./extension.js",
+  "contributes": {
+    "menus": {
+      "editor/context": [
+        {
+          "when": "editorHasSelection",
+          "command": "consoleLogger"
+        }
+      ],
+      "explorer/context": [
+        {
+          "when": "explorerResourceIsFolder",
+          "command": "createFiles"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "consoleLogger",
+        "key": "alt+c",
+        "mac": "alt+c",
+        "when": "editorHasSelection"
+      },
+      {
+        "command": "insertCode",
+        "key": "alt+enter",
+        "mac": "alt+enter"
+      }
+    ],
+    "commands": [
+      {
+        "command": "createFiles",
+        "title": "生成curd文件"
+      },
+      {
+        "command": "consoleLogger",
+        "title": "打印输出"
+      },
+      {
+        "command": "insertCode",
+        "title": "插入代码"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "20.2.5",
+    "eslint": "^8.41.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "typescript": "^5.1.3",
+    "@vscode/test-electron": "^2.3.2"
+  },
+  "dependencies": {
+    "fs-extra": "^11.1.1"
+  },
+  "repository": "https://github.com/wkpGitHub/vscode/kp-cip"
+}
