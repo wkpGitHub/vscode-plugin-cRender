@@ -1,6 +1,7 @@
 <script lang="jsx">
 import {msgBusinessParam} from '@/request'
 import { defineFormConfig, defineSearchConfig, defineTableConfig } from '@common/hooks'
+import {enabledOpts} from '@/utils/constants'
 import store from '@/store'
 
 export default {
@@ -22,7 +23,7 @@ export default {
       ],
       handlerSlot({row, editRow, deleteRow}) {
         return <>
-          <el-button link type="primary" onClick={() => showEdit(editRow, row)}>编辑</el-button>
+          <el-button link type="primary" onClick={() => editRow({row})}>编辑</el-button>
           <el-button link type="danger" onClick={() => deleteRow({row})}>删除</el-button>
         </>
       }
@@ -47,7 +48,7 @@ export default {
 
     return () => <PageList 
       tableConfig={tableConfig} 
-      searchConfig={{ configList: searchConfigList }} 
+      searchConfig={searchConfigList} 
       formConfig={formConfig}
       dialogConfig={{width: 500}}
       api={msgBusinessParam}>

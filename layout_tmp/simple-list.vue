@@ -1,5 +1,5 @@
 <script lang="jsx">
-import { vendor, vendorApiVersion, vendorTemplate } from '@/request'
+import { vendorService, vendorConfigItemService } from '@/request'
 import { defineFormConfig, defineSearchConfig, defineTableConfig } from '@common/hooks'
 import { reactive, ref, nextTick } from 'vue';
 import store from '@/store'
@@ -13,7 +13,20 @@ export default {
     const state = reactive({
       vendorId: '',
     })
-    const tableConfig = {
+
+    function leftChangeData({tableState}) {
+      const checkRow = tableState.data.find(item => state.vendorId === item.id)
+      // 如果当前数据保护选中的数据
+      if (checkRow) {
+        checkRow._checked = true
+      }  else {
+        // 如果不包含，就要重置右边所有列
+        state.vendorId = ''
+        middleState.apiVersionId = ''
+      }
+    }
+
+    const tableConfig = defineTableConfig({
       rowName: 'name',
       columns: [
         { label: '名称', prop: 'name' },
@@ -24,13 +37,12 @@ export default {
       ],
       onClickRow({ row, data }) {
         data.forEach(item => item._checked = (row.id === item.id))
-        middleState.apiVersionId = ''
         state.vendorId = row.id
-        middlePageListRef.value.search()
-        rightState.reload = false
-        nextTick().then(() => rightState.reload = true)
+        middleState.apiVersionId = ''
+        
+        nextTick().then(() => middlePageListRef.value.search())
       }
-    }
+    })
 
     const formConfig = defineFormConfig({
       configList: [
@@ -48,6 +60,17 @@ export default {
       apiVersionId: ''
     })
 
+    function middleChangeData({tableState}) {
+      const checkRow = tableState.data.find(item => middleState.groupId === item.id)
+      // 如果当前数据保护选中的数据
+      if (checkRow) {
+        checkRow._checked = true
+      }  else {
+        // 如果不包含，就要重置右边所有列
+        middleState.apiVersionId = ''
+      }
+    }
+
     const middleTableConfig = defineTableConfig({
       rowName: 'name',
       columns: [
@@ -56,7 +79,7 @@ export default {
       onClickRow({ row, data }) {
         data.forEach(item => item._checked = (row.id === item.id))
         middleState.apiVersionId = row.id
-        rightPageListRef.value.search()
+        nextTick().then(() => rightPageListRef.value.search())
       }
     })
 
@@ -75,7 +98,6 @@ export default {
     /* ---------------------------------- 右边 --------------------------------------*/
     const rightPageListRef = ref()
     const rightState = reactive({
-      reload: true,
       isShowTmp: false,
       currentItem: {}
     })
@@ -88,7 +110,7 @@ export default {
     const rightTableConfig = defineTableConfig({
       rowName: 'name',
       columns: [
-        { type: 'index', label: '序号', fixed: 'left', width: 50 },
+        { type: 'index', label: '序号', fixed: 'left', width: 42 },
         { label: '名称', prop: 'name' },
         { label: '创建人', prop: 'creator'},
         { label: '创建时间', prop: 'gmtCreate', width: 160 },
@@ -119,42 +141,46 @@ export default {
         pageName=""
         tableConfig={tableConfig}
         searchConfig={{ configList: [{ label: '名称', prop: 'name', width: 120, simple: true }] }}
-        dialogConfig={{ width: 500 }}
+        dialogConfig={{ width: 400 }}
         formConfig={formConfig}
-        api={vendor}>
+        onChangeData={leftChangeData}
+        api={vendorService}>
       </PageList>
       <PageList
         ref={middlePageListRef}
+        key={state.vendorId}
         simple
         pageName=""
         style="width: 400px"
         extraParams={state}
         initSearch={false}
-        operateConfig={{hiddenAdd: !state.vendorId}}
+        operateConfig={{disabledAdd: !state.vendorId}}
         tableConfig={middleTableConfig}
         searchConfig={{ configList: [{ label: '名称', prop: 'name', width: 120, simple: true }] }}
-        dialogConfig={{ width: 500 }}
+        dialogConfig={{ width: 400 }}
         formConfig={middleFormConfig}
-        api={vendorApiVersion}>
+        onChangeData={middleChangeData}
+        api={vendorConfigItemService}>
       </PageList>
-      {rightState.reload && <PageList
+      <PageList
         ref={rightPageListRef}
+        key={middleState.apiVersionId}
         simple
         pageName=""
         style="min-width: 400px"
         class="flex--auto-hidden"
         extraParams={middleState}
         initSearch={false}
-        operateConfig={{hiddenAdd: !middleState.apiVersionId}}
+        operateConfig={{disabledAdd: !middleState.apiVersionId}}
         tableConfig={rightTableConfig}
         searchConfig={{ configList: [
           { type: 'radio', isButton: true, defaultValue: '', prop: 'enabled', options: [{label: '全部', value: ''} , ...enabledOpts] },
           { label: '名称', prop: 'name', width: 120, simple: true }
         ]}}
-        dialogConfig={{ width: 500 }}
+        dialogConfig={{ width: 400 }}
         formConfig={rightFormConfig}
-        api={vendorTemplate}>
-      </PageList>}
+        api={vendorConfigItemService}>
+      </PageList>
       {/* <SetTemplate v-model={rightState.isShowTmp} currentItem={rightState.currentItem} /> */}
     </div>
   }
