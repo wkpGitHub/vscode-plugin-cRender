@@ -1,7 +1,7 @@
 <script lang="jsx">
 import { vendorService, vendorConfigItemService } from '@/request'
 import { defineFormConfig, defineSearchConfig, defineTableConfig } from '@common/hooks'
-import { reactive, ref, nextTick } from 'vue';
+import { reactive } from 'vue';
 import store from '@/store'
 import {enabledOpts} from '@/utils/constants'
 // import SetTemplate from './setTemplate'
@@ -36,11 +36,10 @@ export default {
         }},
       ],
       onClickRow({ row, data }) {
+        if (row._checked) return
         data.forEach(item => item._checked = (row.id === item.id))
         state.vendorId = row.id
         middleState.apiVersionId = ''
-        
-        nextTick().then(() => middlePageListRef.value.search())
       }
     })
 
@@ -55,7 +54,6 @@ export default {
     })
 
     /* ---------------------------------- 中间 --------------------------------------*/
-    const middlePageListRef = ref()
     const middleState = reactive({
       apiVersionId: ''
     })
@@ -77,9 +75,9 @@ export default {
         { label: '名称', prop: 'name' },
       ],
       onClickRow({ row, data }) {
+        if (row._checked) return
         data.forEach(item => item._checked = (row.id === item.id))
         middleState.apiVersionId = row.id
-        nextTick().then(() => rightPageListRef.value.search())
       }
     })
 
@@ -96,7 +94,6 @@ export default {
     })
 
     /* ---------------------------------- 右边 --------------------------------------*/
-    const rightPageListRef = ref()
     const rightState = reactive({
       isShowTmp: false,
       currentItem: {}
@@ -147,13 +144,12 @@ export default {
         api={vendorService}>
       </PageList>
       <PageList
-        ref={middlePageListRef}
         key={state.vendorId}
         simple
         pageName=""
         style="width: 400px"
         extraParams={state}
-        initSearch={false}
+        initSearch={!!state.vendorId}
         operateConfig={{disabledAdd: !state.vendorId}}
         tableConfig={middleTableConfig}
         searchConfig={{ configList: [{ label: '名称', prop: 'name', width: 120, simple: true }] }}
@@ -163,14 +159,13 @@ export default {
         api={vendorConfigItemService}>
       </PageList>
       <PageList
-        ref={rightPageListRef}
         key={middleState.apiVersionId}
         simple
         pageName=""
         style="min-width: 400px"
         class="flex--auto-hidden"
         extraParams={middleState}
-        initSearch={false}
+        initSearch={!!middleState.apiVersionId}
         operateConfig={{disabledAdd: !middleState.apiVersionId}}
         tableConfig={rightTableConfig}
         searchConfig={{ configList: [

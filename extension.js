@@ -3,10 +3,7 @@
 const vscode = require('vscode');
 const fs = require('fs-extra')
 const path = require('path')
-
-
-console.log('ww')
-
+const CreatePageQuick = require('./src/createPageQuick/index.js')
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 
@@ -22,6 +19,13 @@ function activate(context) {
 	// Now provide the implementation of the command with  registerCommand
 	// The commandId parameter must match the command field in package.json
   // vscode.commands.executeCommand('demo1.helloWorld')
+  let createPageInstance = {}
+  const createPageQuick = vscode.commands.registerCommand('createPageQuick', function () {
+    if (createPageInstance.webviewPanel) {
+      createPageInstance.webviewPanel.dispose()
+    }
+    createPageInstance = new CreatePageQuick(context)
+  })
 
   let consoleLogger = vscode.commands.registerCommand('consoleLogger', function () {
     // The code you place here will be executed every time your command is executed
@@ -74,51 +78,51 @@ function activate(context) {
     if (curLineText.endsWith('searchConfig')) {
       activeTextEditor.edit((TextEditorEdit) => {
         const range = new vscode.Range(new vscode.Position(end.line, 0), new vscode.Position(end.line, end.character))
-        TextEditorEdit.replace(range, `const searchConfigList = defineSearchConfig({
-  configList: [
-    { type: 'radio', isButton: true, defaultValue: '', prop: 'enabled', options: [{label: '全部', value: ''}, ...enabledOpts] },
-    { label: '名称', prop: 'name', width: 200 },
-  ]
-})`);
+        TextEditorEdit.replace(range, ` const searchConfig = defineSearchConfig({
+    configList: [
+      { type: 'radio', isButton: true, defaultValue: '', prop: 'enabled', options: [{label: '全部', value: ''}, ...enabledOpts] },
+      { label: '名称', prop: 'name', width: 200 },
+    ]
+  })`);
       });
     } 
     if (curLineText.endsWith('formConfig')) {
       activeTextEditor.edit((TextEditorEdit) => {
         const range = new vscode.Range(new vscode.Position(end.line, 0), new vscode.Position(end.line, end.character))
-        TextEditorEdit.replace(range, `const formConfig = defineFormConfig({
-  configList: [
-    { label: '名称', prop: 'name', required: true },
-    { label: '类型', type: 'select', prop: 'msgType', options: () => storeState.selectOptMap.msg_auth_msg_type },
-    { label: '状态', type: 'radio', defaultValue: true, prop: 'enabled', required: true, options: enabledOpts },
-    { label: '备注', prop: 'memo', inputType: 'textarea', rows: 4 },
-  ],
-  labelWidth: 90
-})`);
+        TextEditorEdit.replace(range, ` const formConfig = defineFormConfig({
+    configList: [
+      { label: '名称', prop: 'name', required: true },
+      { label: '类型', prop: 'type', type: 'select', options: () => storeState.selectOptMap.msg_auth_msg_type },
+      { label: '状态', prop: 'enabled', type: 'radio', defaultValue: true, required: true, options: enabledOpts },
+      { label: '备注', prop: 'memo', inputType: 'textarea', rows: 4 },
+    ],
+    labelWidth: 90
+  })`);
       });
     }
     if (curLineText.endsWith('tableConfig')) {
       activeTextEditor.edit((TextEditorEdit) => {
         const range = new vscode.Range(new vscode.Position(end.line, 0), new vscode.Position(end.line, end.character))
-        TextEditorEdit.replace(range, `const tableConfig = defineTableConfig({
-  rowName: 'name',
-  columns: [
-    { type: 'index', label: '序号', fixed: 'left', width: 50 },
-    { label: '名称', prop: 'name' },
-    { label: '类型', type: 'select', prop: 'msgType', options: () => storeState.selectOptMap.msg_auth_msg_type },
-    { label: '状态', type: 'status', prop: 'enabled', options: enabledOpts, width: 60 },
-    { label: '备注', prop: 'memo', minWidth: 200, showOverflowTooltip: true},
-    { label: '创建人', prop: 'creator'},
-    { label: '创建时间', prop: 'gmtCreate', width: 160 },
-    { label: '修改人', prop: 'modifier', hidden: true },
-    { label: '修改时间', prop: 'gmtModified', width: 160, hidden: true },
-  ],
-  handlerSlot({row, editRow, deleteRow}) {
-    return <>
-      <el-button link type="primary" onClick={() => showEdit(editRow, row)}>编辑</el-button>
-      <el-button link type="danger" onClick={() => deleteRow({row})}>删除</el-button>
-    </>
-  }
-})`);
+        TextEditorEdit.replace(range, ` const tableConfig = defineTableConfig({
+    rowName: 'name',
+    columns: [
+      { type: 'index' },
+      { label: '名称', prop: 'name' },
+      { label: '类型', prop: 'msgType', type: 'select', options: () => storeState.selectOptMap.msg_auth_msg_type },
+      { label: '状态', prop: 'enabled', type: 'status', options: enabledOpts, width: 60 },
+      { label: '备注', prop: 'memo', minWidth: 200, showOverflowTooltip: true},
+      { label: '创建人', prop: 'creator'},
+      { label: '创建时间', prop: 'gmtCreate', width: 160 },
+      { label: '修改人', prop: 'modifier', hidden: true },
+      { label: '修改时间', prop: 'gmtModified', width: 160, hidden: true },
+    ],
+    handlerSlot({row, editRow, deleteRow}) {
+      return <>
+        <el-button link type="primary" onClick={() => showEdit(editRow, row)}>编辑</el-button>
+        <el-button link type="danger" onClick={() => deleteRow({row})}>删除</el-button>
+      </>
+    }
+  })`);
       });
     }
   }
@@ -179,6 +183,7 @@ function activate(context) {
 	context.subscriptions.push(consoleLogger);
 	// context.subscriptions.push(createFiles);
 	context.subscriptions.push(insertCode);
+	context.subscriptions.push(createPageQuick);
 
 }
 

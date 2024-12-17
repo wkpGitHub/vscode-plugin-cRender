@@ -11,10 +11,10 @@ export default {
     const tableConfig = defineTableConfig({
       rowName: 'name',
       columns: [
-        { type: 'index', label: '序号', fixed: 'left', width: 50 },
+        { type: 'index' },
         { label: '名称', prop: 'name' },
-        { label: '类型', type: 'select', prop: 'msgType', options: () => storeState.selectOptMap.msg_auth_msg_type },
-        { label: '状态', type: 'status', prop: 'enabled', options: enabledOpts, width: 60 },
+        { label: '类型', prop: 'msgType', type: 'select', options: () => storeState.selectOptMap.msg_auth_msg_type },
+        { label: '状态', prop: 'enabled', type: 'status', options: enabledOpts, width: 60 },
         { label: '备注', prop: 'memo', minWidth: 200, showOverflowTooltip: true},
         { label: '创建人', prop: 'creator'},
         { label: '创建时间', prop: 'gmtCreate', width: 160 },
@@ -29,7 +29,7 @@ export default {
       }
     })
 
-    const searchConfigList = defineSearchConfig({
+    const searchConfig = defineSearchConfig({
       configList: [
         { type: 'radio', isButton: true, defaultValue: '', prop: 'enabled', options: [{label: '全部', value: ''}, ...enabledOpts] },
         { label: '名称', prop: 'name', width: 200 },
@@ -39,8 +39,8 @@ export default {
     const formConfig = defineFormConfig({
       configList: [
         { label: '名称', prop: 'name', required: true },
-        { label: '类型', type: 'select', prop: 'msgType', options: () => storeState.selectOptMap.msg_auth_msg_type },
-        { label: '状态', type: 'radio', defaultValue: true, prop: 'enabled', required: true, options: enabledOpts },
+        { label: '类型', prop: 'type', type: 'select', options: () => storeState.selectOptMap.msg_auth_msg_type },
+        { label: '状态', prop: 'enabled', type: 'radio', defaultValue: true, required: true, options: enabledOpts },
         { label: '备注', prop: 'memo', inputType: 'textarea', rows: 4 },
       ],
       labelWidth: 90
@@ -48,7 +48,7 @@ export default {
 
     return () => <PageList 
       tableConfig={tableConfig} 
-      searchConfig={searchConfigList} 
+      searchConfig={searchConfig} 
       formConfig={formConfig}
       dialogConfig={{width: 500}}
       api={msgBusinessParam}>

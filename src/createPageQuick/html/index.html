@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="element-ui.css">
+  <link rel="stylesheet" href="dark.css">
+  <style>
+    body{
+      --border-radius: 4px;
+      --border: 1px solid #4C4D4F;
+      --el-color-primary: #005BF5;
+      --el-color-primary-light-5: #004CCC;
+      --el-color-primary-light-3: #004CCC;
+      --el-color-primary-light-7: #004CCC;
+    }
+    .c-card{
+      border-radius: var(--border-radius);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .c-card:before{
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: inherit;
+    border: var(--border);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .c-card>header{
+    border-bottom: var(--border);
+    padding: 8px 12px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  .c-card>footer{
+    border-top: var(--border);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+  }
+  .c-card>main{
+    padding: 12px;
+    flex: auto;
+  }
+  </style>
+  <script src="./vue.js"></script>
+  <script src="./element-ui.js"></script>
+</head>
+<body>
+  <div id="app">
+    <div class="c-card" style="width: 600px; margin-top: 20px;">
+      <main>
+        <el-form label-width="120px">
+          <el-form-item label="模块名称" prop="moduleName">
+            <el-input v-model="form.moduleName"></el-input>
+          </el-form-item>
+          <!-- <el-form-item label="路由文件夹" prop="routeDirName">
+            <el-select v-model="form.routeDirName">
+              <el-option label="routes" value="routes"></el-option>
+              <el-option label="ops-routes" value="ops-routes"></el-option>
+            </el-select>
+          </el-form-item> -->
+          <!-- <el-form-item label="一级菜单" prop="menuName">
+            <el-input v-model="form.menuName"></el-input>
+          </el-form-item>
+          <el-form-item label="二级菜单" prop="subMenu">
+            <el-input v-model="form.subMenu"></el-input>
+          </el-form-item>
+          <el-form-item label="页面菜单名称" prop="pageName">
+            <el-input v-model="form.pageName"></el-input>
+          </el-form-item> -->
+          <el-form-item label="页面vue文件名" prop="fileName">
+            <el-input v-model="form.fileName"></el-input>
+          </el-form-item>
+          <el-form-item label="服务路径" prop="servicePath" inline-message="后端接口服务路径" show-message>
+            <el-input v-model="form.servicePath"></el-input>
+          </el-form-item>
+        </el-form>
+      </main>
+      <footer>
+        <el-button type="primary" @click="save">立即生成</el-button>
+      </footer>
+    </div>
+  </div>
+  <script>
+    const vscode = acquireVsCodeApi();
+    const App = {
+      data() {
+        return {
+          form: {
+            routeDirName:'routes'
+          },
+        };
+      },
+      methods: {
+        save() {
+          debugger
+          vscode.postMessage({
+            type: 'createPageQuick',
+            data: JSON.stringify(this.form)
+          })
+        }
+      }
+    };
+    const app = Vue.createApp(App);
+    app.use(ElementPlus);
+    app.mount("#app");
+
+  </script>
+</body>
+</html>
