@@ -207,5 +207,6 @@ export const ${serviceName} = new CreateService({baseURL, service: '${servicePat
     const writePath = path.join(vscode.workspace.rootPath, `src/views/${moduleName}/${fileName}/index.vue`)
     fs.createFileSync(writePath)
     fs.writeFileSync(writePath, fileContent)
+    vscode.window.showTextDocument(vscode.Uri.file(writePath))
   }
 }

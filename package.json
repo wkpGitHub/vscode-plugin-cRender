@@ -2,7 +2,7 @@
   "name": "kp-cRender",
   "displayName": "kp-cRender",
   "description": "为cRender提供的快捷开发",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "wangkangping",
   "engines": {
     "vscode": "^1.80.0"
@@ -66,7 +66,7 @@
     ]
   },
   "scripts": {
-    "lint": "eslint .",
+    "build": "vsce package",
     "pretest": "npm run lint",
     "test": "node ./test/runTest.js"
   },
